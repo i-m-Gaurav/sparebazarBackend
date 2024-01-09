@@ -39,8 +39,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 const port = 4000
-// const mongoose = require('mongoose');
-// mongoose.connect('mongodb+srv://adyakumari:22352002@cluster0.fup7ty1.mongodb.net/sparebazar');
+
 
 
 const mongoose = require("mongoose");

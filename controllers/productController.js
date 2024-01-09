@@ -1,4 +1,16 @@
-const mongoose = require("mongoose");
+
+const mongoose = require('mongoose');
+const grid = require('gridfs-stream');
+
+const conn = mongoose.connection;
+let gfs;
+
+conn.once('open', () => {
+  gfs = grid(conn.db, mongoose.mongo);
+  gfs.collection('uploads'); // Set the GridFS collection name
+});
+
+
 
 let schema=new mongoose.Schema({ pname: String, pdesc: String, price: String,whatsappNumber:String, category: String, pimage:String ,priceNegotiable:String,addedBy:mongoose.Schema.Types.ObjectId,
   isApproved: {
@@ -63,36 +75,53 @@ module.exports.search= (req, res) => {
 
 
 
-module.exports.addProduct= (req, res) => {
-    console.log(req.body);
-    console.log(req.file);
-  
+  module.exports.addProduct = (req, res) => {
     const plat = req.body.plat;
-    const plong = req.body.plong; 
+    const plong = req.body.plong;
     const pname = req.body.pname;
     const pdesc = req.body.pdesc;
     const price = req.body.price;
     const category = req.body.category;
-    const pimage = req.file.path;
-    const whatsappNumber=req.body.whatsappNumber;
-    const priceNegotiable=req.body.priceNegotiable;
-    const isSold=req.body.isSold;
-    const addedBy=req.body.userId;
-    const address=req.body.address;
+    const whatsappNumber = req.body.whatsappNumber;
+    const priceNegotiable = req.body.priceNegotiable;
+    const isSold = req.body.isSold;
+    const addedBy = req.body.userId;
+    const address = req.body.address;
   
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded' });
+    }
   
-    const product = new Products({ pname, pdesc, price,whatsappNumber, category, pimage,priceNegotiable,isSold,addedBy,address,
-      pLoc:{type:'Point',coordinates:[plat,plong]} });
-    product.save()
-      .then(() => {
-        res.send({ message: 'Product Added Successfully' })
-      })
-      .catch((e) => {
-        console.log(e);
-        res.send({ message: 'server error' })
-      })
+    const { originalname, buffer } = req.file;
   
-  }
+    const writestream = gfs.createWriteStream({
+      filename: originalname,
+      metadata: {
+        pname,
+        pdesc,
+        price,
+        category,
+        whatsappNumber,
+        priceNegotiable,
+        isSold,
+        addedBy,
+        address,
+        pLoc: { type: 'Point', coordinates: [plat, plong] },
+      },
+    });
+  
+    writestream.on('close', (file) => {
+      res.json({ message: 'Product Added Successfully', fileId: file._id });
+    });
+  
+    writestream.on('error', (error) => {
+      console.error(error);
+      res.status(500).json({ message: 'Image upload failed' });
+    });
+  
+    // Write the file to GridFS
+    writestream.end(buffer);
+  };
 
 module.exports.editProduct= (req, res) => {
     console.log(req.body);

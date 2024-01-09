@@ -28,7 +28,7 @@ const httpServer = http.createServer(app);
 
 const io = new Server(httpServer, {
   cors: {
-    origin: 'https://soft-bienenstitch-e09a0d.netlify.app/', // Change this to your frontend URL
+    origin: 'http://localhost:3000', // Change this to your frontend URL
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true, // include cookies in CORS requests if needed
   },

@@ -4,6 +4,8 @@ const path = require('path')
 var jwt = require('jsonwebtoken');
 const productController=require('./controllers/productController');
 const userController=require('./controllers/userController');
+require('dotenv').config();
+
 
 const multer = require('multer')
 const http=require('http');
@@ -43,7 +45,7 @@ const port = 4000
 
 const mongoose = require("mongoose");
 const { Socket } = require('dgram');
-mongoose.connect("mongodb+srv://adyakumari:22352002@cluster0.fup7ty1.mongodb.net/sparebazar").then(() => {
+mongoose.connect(process.env.MONGO_URI).then(() => {
   console.log("mongoose connected ")
 }).catch((e) => {
   console.log("not connected")

@@ -80,7 +80,38 @@ app.post('/liked-products', userController.likedProducts);
 app.post('/my-products', productController.myProducts);
 
 
-app.post('/add-product', upload.single('pimage'),productController.addProduct)
+app.post('/add-product', upload.single('pimage'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ message: 'No file uploaded' });
+  }
+
+  const { originalname, buffer } = req.file;
+
+  const writestream = gfs.createWriteStream({
+    filename: originalname,
+    metadata: {
+      // Add any metadata you need here
+    },
+  });
+
+  writestream.on('close', (file) => {
+    // Handle successful file upload
+    const imageUrl = `/uploads/${file._id}`; // Create a URL to access the uploaded image
+
+    // Save other product details and imageUrl in your database
+    // ...
+
+    res.json({ message: 'File uploaded successfully', imageUrl });
+  });
+
+  writestream.on('error', (error) => {
+    console.error(error);
+    res.status(500).json({ message: 'Image upload failed' });
+  });
+
+  // Write the file to GridFS
+  writestream.end(buffer);
+});
 
 
 app.post('/edit-product', upload.single('pimage'),productController.editProduct)

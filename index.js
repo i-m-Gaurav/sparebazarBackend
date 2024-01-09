@@ -81,6 +81,8 @@ app.post('/my-products', productController.myProducts);
 
 app.post('/add-product', upload.single('pimage'),productController.addProduct)
 
+
+
 app.post('/edit-product', upload.single('pimage'),productController.editProduct)
 
 app.post('/approve-product/:pId',productController.approveProducts)

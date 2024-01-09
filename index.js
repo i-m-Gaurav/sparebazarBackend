@@ -79,8 +79,8 @@ app.post('/liked-products', userController.likedProducts);
 
 app.post('/my-products', productController.myProducts);
 
-app.post('/add-product', upload.single('pimage'),productController.addProduct)
 
+app.post('/add-product', upload.single('pimage'),productController.addProduct)
 
 
 app.post('/edit-product', upload.single('pimage'),productController.editProduct)

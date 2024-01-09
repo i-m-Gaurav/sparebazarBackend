@@ -87,7 +87,8 @@ module.exports.addProduct= (req, res) => {
       .then(() => {
         res.send({ message: 'Product Added Successfully' })
       })
-      .catch(() => {
+      .catch((e) => {
+        console.log(e);
         res.send({ message: 'server error' })
       })
   

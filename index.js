@@ -80,7 +80,7 @@ app.post('/liked-products', userController.likedProducts);
 app.post('/my-products', productController.myProducts);
 
 
-app.post('/add-product', upload.single('pimage'), (req, res) => {
+app.post('/add-product', (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: 'No file uploaded' });
   }

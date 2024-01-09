@@ -8,7 +8,7 @@ require('dotenv').config();
 
 
 const multer = require('multer')
-const http=require('https');
+const http=require('http');
 const {Server}=require("socket.io");
 
 const storage = multer.diskStorage({
